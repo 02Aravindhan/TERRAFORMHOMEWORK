@@ -29,13 +29,7 @@ resource "azurerm_route_table" "subnetweb-udr" {
   location = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
-  # route {
-  #   name = "route-to-subnetweb"
-  #   address_prefix = ""
-  #   next_hop_type = "VirtualAppliance"
-  #   next_hop_in_ip_address = ""
   
-  # }
   depends_on = [ azurerm_resource_group.rg ]
 }
 
