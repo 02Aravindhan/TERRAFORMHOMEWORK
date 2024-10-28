@@ -14,10 +14,15 @@ subnets = {
        address_prefixes="10.0.1.0/24"
   }
 }
-nsg = "nsg"
+
+nsg_name ={
+  "module_nsg"={
+       name="module_nsg"
+}
+}
 
 nsg_rules = {
-  "nsg"={
+  "nsg_rules"={
      name                       = "Allow_HTTP"
       priority                   = 100
       direction                  = "Inbound"
@@ -27,7 +32,10 @@ nsg_rules = {
       destination_port_range     = 80
       source_address_prefix      = "*"
       destination_address_prefix = "*"
-      
+     
+
   }
 
 }
+
+route_table = "module_routetable"
