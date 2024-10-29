@@ -16,10 +16,10 @@ output "nsg_name" {
   value = module.nsg_name
   
 }
-# output "nsg_rules" {
-#   value = module.nsg_rules
+output "nsg_rules" {
+  value = module.nsg_rules
   
-# }
+}
 output "route_table" {
   value = module.route_table
   

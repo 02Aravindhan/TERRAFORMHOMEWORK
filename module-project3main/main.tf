@@ -48,24 +48,24 @@ module "nsg_name" {
   location = module.rg.location
   
 }
-# module "nsg_rules" {
-#   source = "../project3_modules/nsg_rule"
-#   for_each = var.nsg_rules
-#   nsg_name = module.each.key
-#   rg_name = module.rg.rg
-#   location = module.rg.location
-#   name                        = each.value.name
-#   priority                    = each.value.priority
-#   direction                   = each.value.direction
-#   access                      = each.value.access
-#   protocol                    = each.value.protocol
-#   source_address_prefix       = each.value.source_address_prefix
-#   source_port_range           = each.value.source_port_range
-#   destination_address_prefix  = each.value.destination_address_prefix
-#   destination_port_range      = each.value.destination_port_range
+module "nsg_rules" {
+  source = "../project3_modules/nsg_rule"
+  for_each = var.nsg_rules
+  nsg_name = each.key
+  rg_name = module.rg.rg
+  location = module.rg.location
+  name                        = each.value.name
+  priority                    = each.value.priority
+  direction                   = each.value.direction
+  access                      = each.value.access
+  protocol                    = each.value.protocol
+  source_address_prefix       = each.value.source_address_prefix
+  source_port_range           = each.value.source_port_range
+  destination_address_prefix  = each.value.destination_address_prefix
+  destination_port_range      = each.value.destination_port_range
     
-#     depends_on = [ module.rg,module.nsg_name ]
-#   }
+    depends_on = [ module.rg,module.nsg_name ]
+  }
 
   module "route_table" {
     source = "../project3_modules/routestable"
@@ -75,6 +75,7 @@ module "nsg_name" {
     location = module.rg.location
     
   }
+  
 
 
 
