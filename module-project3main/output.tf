@@ -24,3 +24,11 @@ output "route_table" {
   value = module.route_table
   
 }
+output "nsg-subnets-asso" {
+  value = module.nsg-t0-subnets-asso
+  
+}
+output "routetable-subnets-asso" {
+  value = module.route-to-subnet-associate
+  
+}

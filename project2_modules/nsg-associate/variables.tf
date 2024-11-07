@@ -1,7 +1,7 @@
-variable "nsg-assocate" {
-    type = string
+# variable "nsg-assocate" {
+#     type = string
   
-}
+# }
 variable "subnet_id" {
    type = string
 }

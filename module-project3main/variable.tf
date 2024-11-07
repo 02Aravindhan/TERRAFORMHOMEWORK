@@ -40,8 +40,8 @@ variable "nsg_rules" {
     source_address_prefix      = string
     source_port_range          = string
     destination_address_prefix = string
-    destination_port_range     = string
-    
+    destination_port_ranges     = list(string)
+    nsg_name    =string
 
   }))
 }
@@ -52,3 +52,19 @@ variable "route_table" {
   }))
 }
 
+variable "nsg-to-subnets-associate" {
+  type = map(object({
+    subnets_name=string
+    nsg_name=string
+    
+  }))
+  
+}
+variable "route-to-subnets-associate" {
+  type = map(object({
+    subnets_name=string
+    
+ 
+  }))
+  
+}

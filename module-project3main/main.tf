@@ -13,12 +13,12 @@ provider "azurerm" {
 }
 
 module "rg" {
-  source = "../project3_modules/resource_group"
+  source = "../project2_modules/resource_group"
   rg_name = var.resource_group
   location = var.location
 }
 module "vnets" {
-  source = "../project3_modules/vnets" 
+  source = "../project2_modules/vnets" 
 
   for_each = var.vnets
   address_space = [each.value.address_space  ]
@@ -30,7 +30,7 @@ module "vnets" {
 }
 
 module "subnets" {
-  source = "../project3_modules/subnet"
+  source = "../project2_modules/subnet"
   for_each = var.subnets
   subnets_name = each.value.subnets_name
   address_prefixes = each.value.address_prefixes
@@ -41,7 +41,7 @@ module "subnets" {
   
 }
 module "nsg_name" {
-  source = "../project3_modules/nsg"
+  source = "../project2_modules/nsg"
   for_each = var.nsg_name
   nsg_name = each.value.name
   rg_name =module.rg.rg 
@@ -49,9 +49,9 @@ module "nsg_name" {
   
 }
 module "nsg_rules" {
-  source = "../project3_modules/nsg_rule"
+  source = "../project2_modules/nsg_rule"
   for_each = var.nsg_rules
-  nsg_name = each.key
+  nsg_name = each.value.nsg_name
   rg_name = module.rg.rg
   location = module.rg.location
   name                        = each.value.name
@@ -62,17 +62,34 @@ module "nsg_rules" {
   source_address_prefix       = each.value.source_address_prefix
   source_port_range           = each.value.source_port_range
   destination_address_prefix  = each.value.destination_address_prefix
-  destination_port_range      = each.value.destination_port_range
+  destination_port_range     = each.value.destination_port_ranges
     
     depends_on = [ module.rg,module.nsg_name ]
   }
+module "nsg-t0-subnets-asso" {
+  source = "../project2_modules/nsg-associate"
+  for_each = var.nsg-to-subnets-associate
+  subnet_id =  module.subnets[each.value.subnets_name].subnet_id
+  network_security_group_id = module.nsg_name[each.value.nsg_name].network_security_group_id
+
+  
+}
+
 
   module "route_table" {
-    source = "../project3_modules/routestable"
+    source = "../project2_modules/route _table"
     for_each = var.route_table
     route_table = each.key
     rg_name = module.rg.rg
     location = module.rg.location
+    
+  }
+  
+  module "route-to-subnet-associate" {
+    source = "../project2_modules/routetable-associate"
+    for_each = var.route-to-subnets-associate
+    subnet_id =  module.subnets[each.value.subnets_name].subnet_id
+    route_table_id = module.route_table[each.key].route_table.id
     
   }
   

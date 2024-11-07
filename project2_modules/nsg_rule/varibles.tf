@@ -40,7 +40,7 @@ variable "source_address_prefix" {
     type = string
   }
 variable "destination_port_range" {
-  type = string
+  type =list(string) 
 }
      
 variable "destination_address_prefix" {

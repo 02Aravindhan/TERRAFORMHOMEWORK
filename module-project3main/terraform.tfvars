@@ -53,10 +53,11 @@ nsg_rules={
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "80"
+    destination_port_ranges     = ["80","443","22"]
     source_address_prefix      = "*"
     destination_address_prefix = "*"
-  },
+    nsg_name ="nsg1"
+   },
    "nsg_rules2"= {
     name                       = "Allow_HTTPS"
     priority                   = 1001
@@ -64,22 +65,38 @@ nsg_rules={
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "443"
+    destination_port_ranges     = ["80","443","22"]
     source_address_prefix      = "*"
     destination_address_prefix = "*"
+    nsg_name  ="nsg2"
   },
 
- "nsg_rules3"= {
-    name                       = "Deny_All_Other"
-    priority                   = 2000
+"nsg_rules3"= {
+    name                       = "Allow_HTTPS"
+    priority                   = 1002
     direction                  = "Inbound"
-    access                     = "Deny"
-    protocol                   = "*"
+    access                     = "Allow"
+    protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "*"
+    destination_port_ranges    = ["80","443","22"]
     source_address_prefix      = "*"
     destination_address_prefix = "*"
+    nsg_name  ="nsg3"
+  },
+
+  "nsg_rules4"= {
+    name                       = "Allow"
+    priority                   = 1003
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_ranges     = ["80","443","22"]
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+    nsg_name  ="nsg4"
   }
+
 }
 
 route_table = {
@@ -102,4 +119,48 @@ route_table = {
   
 }
 
+nsg-to-subnets-associate = {
+  
+  "nsg1" = {
+    subnets_name="subnet1"
+    nsg_name="nsg1"
+    
+  },
+  "nsg2" = {
+    subnets_name="subnet2"
+    nsg_name="nsg2"
+    
+  },
+  "nsg3" = {
+    subnets_name="subnet3"
+    nsg_name="nsg3"
+    
+  },
+  "nsg4" = {
+    subnets_name="subnet4"
+    nsg_name="nsg4"
+    
+  }
 
+}
+
+route-to-subnets-associate = {
+
+  "routetable1" = {
+    subnets_name="subnet1"
+      
+  },
+  "routetable2" = {
+    subnets_name="subnet2"
+      
+  },
+  "routetable3" = {
+    subnets_name="subnet3"
+      
+  },
+  "routetable4" = {
+    subnets_name="subnet4"
+      
+  }
+  
+}
