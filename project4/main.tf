@@ -23,29 +23,33 @@ provider "azurerm" {
   resource_group_name ="module2-rg"
  
  }
- resource "azurerm_subnet" "subnets" {
+ module "subnets" {
+  source = "../project2_modules/subnet"
   for_each = var.subnets
-  name =each.key 
-  address_prefixes = [each.value.address_prefix]
-  virtual_network_name = data.azurerm_virtual_network.vnet.name
-  resource_group_name = data.azurerm_virtual_network.vnet.resource_group_name
-   depends_on = [ data.azurerm_resource_group.project4-rg,data.azurerm_virtual_network.vnet ]
- }
+  subnets_name = each.value.subnets_name
+  address_prefixes = each.value.address_prefixes
+  vnet_name = data.azurerm_virtual_network.vnet.name
+  rg_name = data.azurerm_virtual_network.vnet.resource_group_name
+
+  depends_on = [ data.azurerm_virtual_network.vnet ]
+  
+}
 
  # Network Interface (NIC)
-resource "azurerm_network_interface" "nic" {
+module  "nic" {
+  source = "../project2_modules/nic"
   name                      = var.nic_name
   location                  = data.azurerm_virtual_network.vnet.location
   resource_group_name       = data.azurerm_virtual_network.vnet.resource_group_name
-  ip_configuration {
-    name = "internal"
 
-  
-  subnet_id                 = azurerm_subnet.subnets["subnet11"].id
-  private_ip_address_allocation = "Dynamic"
+  ip_configuration {
+    name =var.name
+   subnet_id                 = azurerm_subnet.subnets["subnet11"].id
+  private_ip_address_allocation = var.private_ip_address_allocation
   }
   
 }
+
 data "azurerm_client_config" "current" {}
 data "azuread_client_config" "current" {}
 
@@ -72,37 +76,35 @@ resource "azurerm_key_vault" "Key_vault" {
 }
 
 # Key for disk encryption (Customer Managed Key)
-resource "azurerm_key_vault_key" "key_disk" {
-  name         = "keyvault"
-  key_vault_id = azurerm_key_vault.Key_vault.id
-   key_opts     = ["encrypt", "decrypt"]
-   key_size     = 2048
-   key_type     = "RSA"
+module "key_vault_key" {
+  source = "../project2_modules/disk_encryption-key"  
+  name = var.name
+  key_vault_id = azurerm_key_vault.Key_vault.id  
+  # key_name     = var.key_name
+  key_opts     = var.key_opts
+  key_size     = var.key_size                         
+  key_type     = var.key_type
 }
 
-# Virtual Machine (VM)
-resource "azurerm_linux_virtual_machine" "project4_vm" {
-  name                = var.vm_name
-  resource_group_name = data.azurerm_virtual_network.vnet.resource_group_name
-  location            = data.azurerm_virtual_network.vnet.location
-  size                = var.vm_size
-  admin_username      = var.admin_username
-  admin_password      = var.admin_password
-  network_interface_ids = [
-    azurerm_network_interface.nic.id
-  ]
 
-  os_disk {
-    name                     = var.os_disk_name
-    caching                  = "ReadWrite"
-    storage_account_type     = "Standard_LRS"
-    disk_encryption_set_id = azurerm_key_vault_key.key_disk
-  }
-  source_image_reference {
-    publisher = var.vm_image_publisher
-    offer     = var.vm_image_offer
-    sku       = var.vm_image_sku
-    version   = "latest"
-  }
-  depends_on = [ data.azurerm_resource_group.project4-rg,data.azurerm_virtual_network.vnet ]
+module "project4-vm" {
+  source = "../project2_modules/vm"  # Adjust path to your module
+  
+  vm_name                  = var.vm_name
+  location = data.azurerm_virtual_network.vnet.location
+  resource_group_name = data.azurerm_virtual_network.vnet.resource_group_name
+  vm_size                  = var.vm_size
+  admin_username           = var.admin_username
+  admin_password           = var.admin_password
+  os_disk_name             = var.os_disk_name
+  caching                  = var.caching
+  storage_account_type     = var.storage_account_type
+  vm_image_publisher       = var.vm_image_publisher
+  vm_image_offer           = var.vm_image_offer
+  vm_image_sku             = var.vm_image_sku
+  version                  = var.version
+  network_interface_ids    = [azurerm_network_interface.nic.id]  # Pass NIC ID from the NIC module
+ // key_vault_key_id         = azurerm_key_vault_key.key_vault_key_id  # Pass key vault key ID
+  disk_encryption_set_id = azurerm_key_vault_key.key_disk
+  depends_on = [ data.azurerm_resource_group.project4-rg ]
 }
