@@ -29,25 +29,22 @@ provider "azurerm" {
   subnets_name = each.value.subnets_name
   address_prefixes = each.value.address_prefixes
   vnet_name = data.azurerm_virtual_network.vnet.name
-  rg_name = data.azurerm_virtual_network.vnet.resource_group_name
+  rg_name = data.azurerm_resource_group.project4-rg.name
 
-  depends_on = [ data.azurerm_virtual_network.vnet ]
+  depends_on = [ data.azurerm_resource_group.project4-rg,data.azurerm_virtual_network.vnet ]
   
 }
 
  # Network Interface (NIC)
 module  "nic" {
   source = "../project2_modules/nic"
-  name                      = var.nic_name
-  location                  = data.azurerm_virtual_network.vnet.location
-  resource_group_name       = data.azurerm_virtual_network.vnet.resource_group_name
-
-  ip_configuration {
-    name =var.name
-   subnet_id                 = azurerm_subnet.subnets["subnet11"].id
-  private_ip_address_allocation = var.private_ip_address_allocation
-  }
-  
+  location                  = data.azurerm_resource_group.project4-rg.location
+  resource_group_name       = data.azurerm_resource_group.project4-rg.name
+  nic_name = var.nic_name
+  ip_configuration_name = "internal"
+  subnet_id = module.subnets["subnet11"].subnet_id
+  private_ip_address_allocation = "Dynamic"
+  depends_on = [ data.azurerm_resource_group.project4-rg,module.subnets ]
 }
 
 data "azurerm_client_config" "current" {}
@@ -55,56 +52,52 @@ data "azuread_client_config" "current" {}
 
 
 # key_vault
-resource "azurerm_key_vault" "Key_vault" {
-  name                        = var.keyvault_name
-  resource_group_name = data.azurerm_virtual_network.vnet.resource_group_name
-  location = data.azurerm_virtual_network.vnet.location
-  sku_name                    = "standard"
-  tenant_id                   = data.azurerm_client_config.current.tenant_id
-  purge_protection_enabled    = true
-  soft_delete_retention_days = 30
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azuread_client_config.current.object_id
- 
-    secret_permissions = [
-      "Get",
-      "Set",
-    ]
-  }
-  depends_on = [ data.azurerm_virtual_network.vnet ]
+
+module "key_vault" {
+  source              = "../project2_modules/key-vault"
+  name                = var.keyvault_name
+  sku_name            = var.sku_name
+  purge_protection_enabled   =var.purge_protection_enabled
+  soft_delete_retention_days = var.soft_delete_retention_days
+  resource_group_name = data.azurerm_resource_group.project4-rg.name
+  location           = data.azurerm_resource_group.project4-rg.location
+  tenant_id          = data.azurerm_client_config.current.tenant_id
+  object_id          = data.azuread_client_config.current.object_id
+  secret_permissions = [var.secret_permissions]
+  depends_on = [ data.azurerm_resource_group.project4-rg ]
 }
 
 # Key for disk encryption (Customer Managed Key)
 module "key_vault_key" {
   source = "../project2_modules/disk_encryption-key"  
-  name = var.name
-  key_vault_id = azurerm_key_vault.Key_vault.id  
-  # key_name     = var.key_name
-  key_opts     = var.key_opts
-  key_size     = var.key_size                         
-  key_type     = var.key_type
+  name =   var.key-name
+  disk_encryption-key_id = module.key_vault.key_vault_id
+  //key_name     = "keyvault"
+  key_opts     = ["encrypt", "decrypt"]
+  key_size     =2048                         
+  key_type     = "RSA"
+
 }
 
 
 module "project4-vm" {
-  source = "../project2_modules/vm"  # Adjust path to your module
+  source = "../project2_modules/vm"  
   
   vm_name                  = var.vm_name
-  location = data.azurerm_virtual_network.vnet.location
-  resource_group_name = data.azurerm_virtual_network.vnet.resource_group_name
+  location = data.azurerm_resource_group.project4-rg.location
+  resource_group_name = data.azurerm_resource_group.project4-rg.name
   vm_size                  = var.vm_size
   admin_username           = var.admin_username
   admin_password           = var.admin_password
   os_disk_name             = var.os_disk_name
   caching                  = var.caching
   storage_account_type     = var.storage_account_type
-  vm_image_publisher       = var.vm_image_publisher
-  vm_image_offer           = var.vm_image_offer
-  vm_image_sku             = var.vm_image_sku
-  version                  = var.version
-  network_interface_ids    = [azurerm_network_interface.nic.id]  # Pass NIC ID from the NIC module
+   vm_image_publisher  = "Canonical"
+   vm_image_offer      = "Ubuntuserver"
+   vm_image_sku        = "18.04-LTS"
+   vm_image_version    = "latest" 
+  network_interface_ids    = module.nic.nic_id
  // key_vault_key_id         = azurerm_key_vault_key.key_vault_key_id  # Pass key vault key ID
-  disk_encryption_set_id = azurerm_key_vault_key.key_disk
+  disk_encryption_set_id = module.key_vault_key.disk_encryption-key_id
   depends_on = [ data.azurerm_resource_group.project4-rg ]
 }

@@ -10,16 +10,23 @@ variable "subnets" {
 variable "nic_name" {
  type = string
 }
-variable "ip_configuration" {
 
-  type = object({
-    name                            = string
-    //subnet_id                       = string
-    private_ip_address_allocation   = string
-  })
-}
+
+ 
 # Key Vault
 variable "keyvault_name" {
+  type = string
+}
+variable "sku_name" {
+  type = string
+}
+variable "purge_protection_enabled" {
+  type = string
+}
+variable "soft_delete_retention_days" {
+  type = string
+}
+variable "secret_permissions" {
   type = string
 }
 
@@ -50,41 +57,24 @@ variable "storage_account_type" {
   type = string
 }
 
-# VM Image details (Ubuntu in this case)
-variable "vm_image_publisher" {
- type = string
-}
 
-variable "vm_image_offer" {
-  type = string
-}
-
-variable "vm_image_sku" {
-  type = string
-}
-variable "version" {
-  type = string
-}
 
 //encrytion-disk
-variable "name" {
-    type = string
-  
-}
-variable "key_vault_id" {
+variable "key-name" {
     type = string
   
 }
 
-variable "key_opts" {
-  type        = string
+
+# variable "key_opts" {
+#   type        = string
   
-}
-variable "key_size" {
-  type = string
-}
-variable "key_type" {
-    type = string
+# }
+# variable "key_size" {
+#   type = string
+# }
+# variable "key_type" {
+#     type = string
   
-}
+# }
 

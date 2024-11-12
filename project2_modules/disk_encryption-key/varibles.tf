@@ -2,12 +2,12 @@ variable "name" {
     type = string
   
 }
-variable "key_vault_id" {
+variable "disk_encryption-key_id" {
     type = string
   
 }
 variable "key_opts" {
-  type = string
+  type = list(string)
 }
 variable "key_size" {
   type = string

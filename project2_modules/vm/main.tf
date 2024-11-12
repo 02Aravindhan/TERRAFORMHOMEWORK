@@ -17,7 +17,7 @@ resource "azurerm_linux_virtual_machine" "project4_vm" {
     publisher = var.vm_image_publisher
     offer     = var.vm_image_offer
     sku       = var.vm_image_sku
-    version   = var.version 
+    version   = var.vm_image_offer 
   }
   
 }

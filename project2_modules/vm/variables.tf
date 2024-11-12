@@ -54,7 +54,7 @@ variable "storage_account_type" {
 variable "disk_encryption_set_id" {
   type = string
 }
-variable "version" {
+variable "vm_image_version" {
     type = string
   
 }

@@ -15,9 +15,7 @@
   variable "sku_name" {
     type = string
   }
-  variable "tenant_id" {
-     type = string
-  }
+  
   variable "purge_protection_enabled" {
      type = string
   }

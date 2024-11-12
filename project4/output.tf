@@ -1,3 +1,18 @@
-output "azurerm_linux_virtual_machine" {
-  value = azurerm_linux_virtual_machine.project4_vm
+output "rg" {
+  value = data.azurerm_resource_group.project4-rg
+}
+output "vnet" {
+  value = data.azurerm_virtual_network.vnet
+}
+output "subnet" {
+  value = module.subnets
+}
+output "nic" {
+  value = module.nic
+}
+output "key_vault" {
+  value = module.key_vault
+}
+output "vm" {
+  value = module.project4-vm
 }

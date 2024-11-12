@@ -13,14 +13,15 @@ subnets = {
 # Network Interface (NIC)
 nic_name            = "project4-nic"
 
-ip_configuration = {
-  name = "internal"
-  private_ip_address_allocation = "Dynamic"
-}
+
 
 
 # Key Vault
 keyvault_name       = "keyvault88"
+sku_name                    = "standard"
+purge_protection_enabled    = true
+soft_delete_retention_days = 30
+secret_permissions = ["Get","Set",]
 
 # Virtual Machine (VM)
 vm_name             = "vm"
@@ -31,14 +32,10 @@ os_disk_name        = "vm-os-disk"
 caching                  = "ReadWrite"
 storage_account_type     = "Standard_LRS"
 
-# VM Image details (Ubuntu in this case)
-vm_image_publisher  = "Canonical"
-vm_image_offer      = "UbuntuServer"
-vm_image_sku        = "18.04-LTS"
-version  = "latest"
 
-#encry-disk
- name         = "keyvault"
-   key_opts     = ["encrypt", "decrypt"]
-   key_size     = 2048
-   key_type     = "RSA"
+
+# #encry-disk
+#   key-name       = "keyvault"
+#    key_opts     = ["encrypt", "decrypt"]
+#    key_size     = 2048
+#    key_type     = "RSA"
