@@ -13,6 +13,4 @@ output "nic" {
 output "key_vault" {
   value = module.key_vault
 }
-output "vm" {
-  value = module.project4-vm
-}
+

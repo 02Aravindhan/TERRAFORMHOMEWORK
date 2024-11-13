@@ -1,11 +1,11 @@
 
 
 subnets = {
-  "subnet1" = {
+  "subnet11" = {
        subnets_name="subnet11"
        address_prefix="10.0.5.0/24"
   },
-  "subnet2" = {
+  "subnet22" = {
        subnets_name="subnet22"
        address_prefix="10.0.6.0/24"
   }
@@ -17,11 +17,8 @@ nic_name            = "project4-nic"
 
 
 # Key Vault
-keyvault_name       = "keyvault88"
-sku_name                    = "standard"
-purge_protection_enabled    = true
-soft_delete_retention_days = 30
-secret_permissions = ["Get","Set",]
+keyvault_name       = "keyvault881881"
+
 
 # Virtual Machine (VM)
 vm_name             = "vm"
@@ -35,7 +32,4 @@ storage_account_type     = "Standard_LRS"
 
 
 # #encry-disk
-#   key-name       = "keyvault"
-#    key_opts     = ["encrypt", "decrypt"]
-#    key_size     = 2048
-#    key_type     = "RSA"
+  key-name       = "keyvault"

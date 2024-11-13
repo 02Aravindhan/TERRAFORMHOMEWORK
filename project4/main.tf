@@ -27,7 +27,7 @@ provider "azurerm" {
   source = "../project2_modules/subnet"
   for_each = var.subnets
   subnets_name = each.value.subnets_name
-  address_prefixes = each.value.address_prefixes
+  address_prefixes = each.value.address_prefix
   vnet_name = data.azurerm_virtual_network.vnet.name
   rg_name = data.azurerm_resource_group.project4-rg.name
 
@@ -56,27 +56,26 @@ data "azuread_client_config" "current" {}
 module "key_vault" {
   source              = "../project2_modules/key-vault"
   name                = var.keyvault_name
-  sku_name            = var.sku_name
-  purge_protection_enabled   =var.purge_protection_enabled
-  soft_delete_retention_days = var.soft_delete_retention_days
+  sku_name            = "standard"
+  purge_protection_enabled   =true
+  soft_delete_retention_days =30 
+  secret_permissions = ["Get","Set",]
   resource_group_name = data.azurerm_resource_group.project4-rg.name
   location           = data.azurerm_resource_group.project4-rg.location
   tenant_id          = data.azurerm_client_config.current.tenant_id
   object_id          = data.azuread_client_config.current.object_id
-  secret_permissions = [var.secret_permissions]
   depends_on = [ data.azurerm_resource_group.project4-rg ]
 }
 
 # Key for disk encryption (Customer Managed Key)
 module "key_vault_key" {
   source = "../project2_modules/disk_encryption-key"  
-  name =   var.key-name
+  name =   var.keyvault_name
   disk_encryption-key_id = module.key_vault.key_vault_id
-  //key_name     = "keyvault"
   key_opts     = ["encrypt", "decrypt"]
   key_size     =2048                         
   key_type     = "RSA"
-
+  depends_on = [ module.key_vault ]
 }
 
 
@@ -97,7 +96,6 @@ module "project4-vm" {
    vm_image_sku        = "18.04-LTS"
    vm_image_version    = "latest" 
   network_interface_ids    = module.nic.nic_id
- // key_vault_key_id         = azurerm_key_vault_key.key_vault_key_id  # Pass key vault key ID
   disk_encryption_set_id = module.key_vault_key.disk_encryption-key_id
   depends_on = [ data.azurerm_resource_group.project4-rg ]
 }

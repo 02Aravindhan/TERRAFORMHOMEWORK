@@ -17,18 +17,7 @@ variable "nic_name" {
 variable "keyvault_name" {
   type = string
 }
-variable "sku_name" {
-  type = string
-}
-variable "purge_protection_enabled" {
-  type = string
-}
-variable "soft_delete_retention_days" {
-  type = string
-}
-variable "secret_permissions" {
-  type = string
-}
+
 
 # Virtual Machine (VM)
 variable "vm_name" {
@@ -66,15 +55,5 @@ variable "key-name" {
 }
 
 
-# variable "key_opts" {
-#   type        = string
-  
-# }
-# variable "key_size" {
-#   type = string
-# }
-# variable "key_type" {
-#     type = string
-  
-# }
+
 
