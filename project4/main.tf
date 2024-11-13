@@ -85,17 +85,17 @@ module "project4-vm" {
   vm_name                  = var.vm_name
   location = data.azurerm_resource_group.project4-rg.location
   resource_group_name = data.azurerm_resource_group.project4-rg.name
-  vm_size                  = var.vm_size
+  vm_size                  = "Standard_DS1_v2"
   admin_username           = var.admin_username
   admin_password           = var.admin_password
   os_disk_name             = var.os_disk_name
-  caching                  = var.caching
-  storage_account_type     = var.storage_account_type
+  caching                  = "ReadWrite"
+  storage_account_type     = "Standard_LRS"
    vm_image_publisher  = "Canonical"
    vm_image_offer      = "Ubuntuserver"
    vm_image_sku        = "18.04-LTS"
    vm_image_version    = "latest" 
   network_interface_ids    = module.nic.nic_id
   disk_encryption_set_id = module.key_vault_key.disk_encryption-key_id
-  depends_on = [ data.azurerm_resource_group.project4-rg ]
+  depends_on = [ data.azurerm_resource_group.project4-rg ,module.nic,module.key_vault_key]
 }

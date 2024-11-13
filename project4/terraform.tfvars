@@ -22,12 +22,12 @@ keyvault_name       = "keyvault881881"
 
 # Virtual Machine (VM)
 vm_name             = "vm"
-vm_size             = "Standard_DS1_v2"
+//vm_size             = "Standard_DS1_v2"
 admin_username      = "project4"
 admin_password      = "aravindh88"
 os_disk_name        = "vm-os-disk"
-caching                  = "ReadWrite"
-storage_account_type     = "Standard_LRS"
+//caching                  = "ReadWrite"
+//storage_account_type     = "Standard_LRS"
 
 
 
