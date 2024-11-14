@@ -17,7 +17,7 @@ nic_name            = "project4-nic"
 
 
 # Key Vault
-keyvault_name       = "keyvault881881"
+keyvault_name       = "keyvault881881112"
 
 
 # Virtual Machine (VM)
@@ -26,10 +26,12 @@ vm_name             = "vm"
 admin_username      = "project4"
 admin_password      = "aravindh88"
 os_disk_name        = "vm-os-disk"
-//caching                  = "ReadWrite"
-//storage_account_type     = "Standard_LRS"
+
 
 
 
 # #encry-disk
   key-name       = "keyvault"
+
+#user_ass_identity
+user_ass_identity_name = "key_user_identity"

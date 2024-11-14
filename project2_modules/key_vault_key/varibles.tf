@@ -1,8 +1,8 @@
-variable "name" {
+variable "key_name" {
     type = string
   
 }
-variable "disk_encryption-key_id" {
+variable "key_vault_id" {
     type = string
   
 }

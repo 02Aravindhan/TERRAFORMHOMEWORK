@@ -10,7 +10,6 @@ output "subnet" {
 output "nic" {
   value = module.nic
 }
-output "key_vault" {
-  value = module.key_vault
-}
+
+
 

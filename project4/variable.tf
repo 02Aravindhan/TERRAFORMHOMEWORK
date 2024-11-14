@@ -39,21 +39,26 @@ variable "admin_password" {
 variable "os_disk_name" {
 type = string
 }
-# variable "caching" {
-#   type = string
-# }
-# variable "storage_account_type" {
-#   type = string
-# }
 
 
 
-//encrytion-disk
+
+//key-disk
 variable "key-name" {
     type = string
   
 }
 
+//disk_encryption
+variable "disk_encryption_name" {
+  type = string
+}
 
+
+
+//user_ass_identit
+ variable "user_ass_identity_name" {
+   type = string
+ }
 
 

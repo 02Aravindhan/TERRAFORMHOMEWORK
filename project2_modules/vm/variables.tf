@@ -51,10 +51,14 @@ variable "caching" {
 variable "storage_account_type" {
   type = string
 }
-variable "disk_encryption_set_id" {
-  type = string
-}
+
 variable "vm_image_version" {
     type = string
   
 }
+variable "disk_encryption_set_id" {
+  type = string
+}
+
+
+

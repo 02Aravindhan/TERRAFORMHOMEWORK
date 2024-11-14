@@ -55,7 +55,7 @@ data "azuread_client_config" "current" {}
 
 module "key_vault" {
   source              = "../project2_modules/key-vault"
-  name                = var.keyvault_name
+  name          = var.keyvault_name
   sku_name            = "standard"
   purge_protection_enabled   =true
   soft_delete_retention_days =30 
@@ -69,14 +69,44 @@ module "key_vault" {
 
 # Key for disk encryption (Customer Managed Key)
 module "key_vault_key" {
-  source = "../project2_modules/disk_encryption-key"  
-  name =   var.keyvault_name
-  disk_encryption-key_id = module.key_vault.key_vault_id
+  source = "../project2_modules/key_vault_key"  
+  key_name =   var.keyvault_name
+  key_vault_id = module.key_vault.key_vault_id
   key_opts     = ["encrypt", "decrypt"]
   key_size     =2048                         
   key_type     = "RSA"
   depends_on = [ module.key_vault ]
 }
+
+module "disk_encryption" {
+  source = "../project2_modules/disk_encryption"
+  disk_encryption_name = var.disk_encryption_name
+  resource_group_name = data.azurerm_resource_group.project4-rg.name
+  location = data.azurerm_resource_group.project4-rg.location
+  key_vault_key_id = module.key_vault_key.id
+
+  depends_on = [ module.key_vault_key ]
+}
+
+//create the manged user identity
+module "user_ass_identity" {
+  source = "../project2_modules/user_assigned_identity"
+  user_ass_identity_name = var.user_ass_identity_name
+  resource_group_name =data.azurerm_resource_group.project4-rg.name
+  location = data.azurerm_resource_group.project4-rg.location
+  depends_on = [ data.azurerm_resource_group.project4-rg,module.key_vault,module.key_vault_key ]
+}
+# # Creates the Key vault access policy
+# module "key_vault_policy" {
+#   source = "../project2_modules/key_vault_policy"
+#   key_vault_id = module.key_vault.key_vault_id
+#   tenant_id = data.azurerm_client_config.current.tenant_id
+#   object_id = module.user_ass_identity.user_ass_identity_id
+
+#   key_permissions = ["Get", "List"]
+#   secret_permissions = ["Get", "List"]
+#   depends_on = [ module.key_vault,module.user_ass_identity ]
+# }
 
 
 module "project4-vm" {
@@ -96,6 +126,6 @@ module "project4-vm" {
    vm_image_sku        = "18.04-LTS"
    vm_image_version    = "latest" 
   network_interface_ids    = module.nic.nic_id
-  disk_encryption_set_id = module.key_vault_key.disk_encryption-key_id
+  disk_encryption_set_id = m
   depends_on = [ data.azurerm_resource_group.project4-rg ,module.nic,module.key_vault_key]
 }
