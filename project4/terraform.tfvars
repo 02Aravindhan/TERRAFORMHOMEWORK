@@ -17,21 +17,27 @@ nic_name            = "project4-nic"
 
 
 # Key Vault
-keyvault_name       = "keyvault881881112"
+keyvault_name       = "ky678"
 
 
-# Virtual Machine (VM)
-vm_name             = "vm"
-//vm_size             = "Standard_DS1_v2"
-admin_username      = "project4"
-admin_password      = "aravindh88"
-os_disk_name        = "vm-os-disk"
+# # Virtual Machine (VM)
+# vm_name             = "vm"
+# //vm_size             = "Standard_DS1_v2"
+# admin_username      = "project4"
+# admin_password      = "aravindh88"
+# os_disk_name        = "vm-os-disk"
 
 
 
 
-# #encry-disk
+#key
   key-name       = "keyvault"
 
 #user_ass_identity
 user_ass_identity_name = "key_user_identity"
+
+//load_balancer
+lb_name = "private-lb"
+
+//disk_encryption
+disk_encryption_name = "disk_encryption"

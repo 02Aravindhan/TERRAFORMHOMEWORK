@@ -1,4 +1,4 @@
-variable "name" {
+variable "lb_rule_name" {
   type = string
 }
 variable "protocol" {

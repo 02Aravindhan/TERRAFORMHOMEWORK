@@ -5,7 +5,7 @@ terraform {
         version = "~> 3.0.2"
     }
   }
-  required_version = ">= 1.1.0"           // Create a Resource Group using Terraform
+  required_version = ">= 1.1.0"           
  
 }
  
@@ -46,12 +46,18 @@ module  "nic" {
   private_ip_address_allocation = "Dynamic"
   depends_on = [ data.azurerm_resource_group.project4-rg,module.subnets ]
 }
-
+//nic to associate
+module "nic_backend_asso" {
+  source = "../project2_modules/nic_associate"
+  network_interface_id = module.nic.nic_id
+  backend_address_pool_id = module.backend_address_pool.backend_address_pool_id
+  ip_configuration_name = "internal"
+}
 data "azurerm_client_config" "current" {}
 data "azuread_client_config" "current" {}
 
 
-# key_vault
+# // key_vault
 
 module "key_vault" {
   source              = "../project2_modules/key-vault"
@@ -59,7 +65,15 @@ module "key_vault" {
   sku_name            = "standard"
   purge_protection_enabled   =true
   soft_delete_retention_days =30 
-  secret_permissions = ["Get","Set",]
+  secret_permissions = ["Get",
+      "Set",
+      "Backup",
+      "Delete",
+      "Purge",
+      "List",
+      "Recover",
+      "Restore",]
+  key_permissions = ["Get","List","Create","Delete"]
   resource_group_name = data.azurerm_resource_group.project4-rg.name
   location           = data.azurerm_resource_group.project4-rg.location
   tenant_id          = data.azurerm_client_config.current.tenant_id
@@ -67,13 +81,14 @@ module "key_vault" {
   depends_on = [ data.azurerm_resource_group.project4-rg ]
 }
 
-# Key for disk encryption (Customer Managed Key)
+// Key for disk encryption (Customer Managed Key)
 module "key_vault_key" {
   source = "../project2_modules/key_vault_key"  
   key_name =   var.keyvault_name
   key_vault_id = module.key_vault.key_vault_id
   key_opts     = ["encrypt", "decrypt"]
   key_size     =2048                         
+
   key_type     = "RSA"
   depends_on = [ module.key_vault ]
 }
@@ -85,7 +100,7 @@ module "disk_encryption" {
   location = data.azurerm_resource_group.project4-rg.location
   key_vault_key_id = module.key_vault_key.id
 
-  depends_on = [ module.key_vault_key ]
+  depends_on = [ module.key_vault_key,data.azurerm_resource_group.project4-rg ]
 }
 
 //create the manged user identity
@@ -96,17 +111,50 @@ module "user_ass_identity" {
   location = data.azurerm_resource_group.project4-rg.location
   depends_on = [ data.azurerm_resource_group.project4-rg,module.key_vault,module.key_vault_key ]
 }
-# # Creates the Key vault access policy
-# module "key_vault_policy" {
-#   source = "../project2_modules/key_vault_policy"
-#   key_vault_id = module.key_vault.key_vault_id
-#   tenant_id = data.azurerm_client_config.current.tenant_id
-#   object_id = module.user_ass_identity.user_ass_identity_id
+//load_balancer
+module "private_lb" {
+  source = "../project2_modules/LoadBalancer"
+  lb_name = var.lb_name
+  location = data.azurerm_resource_group.project4-rg.location
+  resource_group_name = data.azurerm_resource_group.project4-rg.name
+  sku = "Standard"
+  subnet_id =  module.subnets["subnet22"].subnet_id
+  private_ip_address_allocation = "Dynamic"
+  frontend_ip_name = "private-frontend-ip"
+  depends_on = [data.azurerm_resource_group.project4-rg ]
+}
 
-#   key_permissions = ["Get", "List"]
-#   secret_permissions = ["Get", "List"]
-#   depends_on = [ module.key_vault,module.user_ass_identity ]
-# }
+//backend_pool
+module "backend_address_pool" {
+  source = "../project2_modules/backend_address_pool"
+  backpool_name = "Backendpool"
+  loadbalancer_id = module.private_lb.azurerm_lb_id
+  depends_on = [ module.private_lb ]
+}
+//lb_rule
+module "lb_rule" {
+  source = "../project2_modules/lb_rule"
+    lb_rule_name                     ="project4-Rule"
+    protocol                         = "Tcp"
+    frontend_port                    = 80
+    backend_port                     = 80
+    frontend_ip_configuration_name   = "private-frontend-ip"
+    idle_timeout_in_minutes          = 4
+    loadbalancer_id                  = module.private_lb.azurerm_lb_id
+    depends_on = [ module.private_lb,module.backend_address_pool ]
+}
+//lb_healthprobe
+module "lb_healthprobe" {
+  source = "../project2_modules/lb_healthprobe"
+     name                = "HealthProbe"
+     protocol            = "Tcp"
+     port                = 80
+     interval_in_seconds = 5
+     number_of_probes    = 2
+     loadbalancer_id = module.private_lb.azurerm_lb_id
+     depends_on = [ module.private_lb ]
+
+}
 
 
 module "project4-vm" {
@@ -126,6 +174,7 @@ module "project4-vm" {
    vm_image_sku        = "18.04-LTS"
    vm_image_version    = "latest" 
   network_interface_ids    = module.nic.nic_id
-  disk_encryption_set_id = m
+  disk_encryption_set_id = module.disk_encryption.id
   depends_on = [ data.azurerm_resource_group.project4-rg ,module.nic,module.key_vault_key]
 }
+

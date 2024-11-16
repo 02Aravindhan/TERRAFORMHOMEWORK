@@ -35,3 +35,6 @@ variable "object_id" {
     type = string
   
 }
+variable "key_permissions" {
+  type =list(string)
+}

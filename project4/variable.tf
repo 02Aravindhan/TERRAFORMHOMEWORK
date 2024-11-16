@@ -13,32 +13,30 @@ variable "nic_name" {
 
 
  
-# Key Vault
+// Key Vault
 variable "keyvault_name" {
   type = string
 }
 
 
-# Virtual Machine (VM)
-variable "vm_name" {
- type = string
-}
-
-# variable "vm_size" {
-# type = string
+# # Virtual Machine (VM)
+# variable "vm_name" {
+#  type = string
 # }
 
-variable "admin_username" {
- type = string
-}
 
-variable "admin_password" {
-  type = string
-}
 
-variable "os_disk_name" {
-type = string
-}
+# variable "admin_username" {
+#  type = string
+# }
+
+# variable "admin_password" {
+#   type = string
+# }
+
+# variable "os_disk_name" {
+# type = string
+# }
 
 
 
@@ -51,7 +49,7 @@ variable "key-name" {
 
 //disk_encryption
 variable "disk_encryption_name" {
-  type = string
+     type = string
 }
 
 
@@ -61,4 +59,7 @@ variable "disk_encryption_name" {
    type = string
  }
 
-
+//load_balance
+variable "lb_name" {
+  type = string
+}

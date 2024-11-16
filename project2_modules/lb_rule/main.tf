@@ -1,5 +1,5 @@
 resource "azurerm_lb_rule" "lb_rule" {
-   name                             = var.name
+   name                             = var.lb_rule_name
     protocol                         = var.protocol
     frontend_port                    = var.frontend_port
     backend_port                     = var.backend_port
@@ -8,11 +8,4 @@ resource "azurerm_lb_rule" "lb_rule" {
     loadbalancer_id                  = var.loadbalancer_id
 }
 
-    # name                             = "myHttpRule"
-    # protocol                         = "Tcp"
-    # frontend_port                    = 80
-    # backend_port                     = 80
-    # frontend_ip_configuration_name   = "myPrivateFrontend"
-    # backend_address_pool_name        = "myBackendPool"
-    # probe_name                       = "myHealthProbe"
-    # idle_timeout_in_minutes          = 4
+ 
