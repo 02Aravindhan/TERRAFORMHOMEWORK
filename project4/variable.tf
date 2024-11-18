@@ -19,13 +19,10 @@ variable "keyvault_name" {
 }
 
 
-# # Virtual Machine (VM)
+# Virtual Machine (VM)
 # variable "vm_name" {
 #  type = string
 # }
-
-
-
 # variable "admin_username" {
 #  type = string
 # }
@@ -38,7 +35,14 @@ variable "keyvault_name" {
 # type = string
 # }
 
+//storage_account
+variable "storage_account_name" {
+  type = string
+}
 
+# variable "managed_disk_name" {
+#   type = string
+# }
 
 
 //key-disk

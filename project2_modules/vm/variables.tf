@@ -30,7 +30,7 @@ variable "os_disk_name" {
 type = string
 }
 
-# VM Image details (Ubuntu in this case)
+# VM Image details 
 variable "vm_image_publisher" {
  type = string
 }
@@ -59,6 +59,5 @@ variable "vm_image_version" {
 variable "disk_encryption_set_id" {
   type = string
 }
-
 
 

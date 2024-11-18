@@ -1,6 +1,6 @@
 
 
-  variable "name" {
+  variable "managed_disk_name" {
     type = string
     
   }
@@ -21,6 +21,4 @@
   variable "disk_size_gb" {
     type = string
   }
-  variable "disk_encryption_set_id" {
-    type = string
-  }
+ 

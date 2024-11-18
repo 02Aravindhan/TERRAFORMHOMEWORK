@@ -56,6 +56,22 @@ module "nic_backend_asso" {
 data "azurerm_client_config" "current" {}
 data "azuread_client_config" "current" {}
 
+//admin_name
+# module "admin_username" {
+#   source = "../project2_modules/admin_username"
+#   admin_username = "project4-name"
+#   value = var.admin_username
+#   key_vault_id = module.key_vault.key_vault_id
+#   depends_on = [ module.key_vault ]
+# }
+# //admin_password
+# module "admin_password" {
+#   source = "../project2_modules/admin_password"
+#   admin_password = "project4-password"
+#   value = var.admin_password
+#   key_vault_id = module.key_vault.key_vault_id
+#   depends_on = [ module.key_vault ]
+# }
 
 # // key_vault
 
@@ -111,6 +127,18 @@ module "user_ass_identity" {
   location = data.azurerm_resource_group.project4-rg.location
   depends_on = [ data.azurerm_resource_group.project4-rg,module.key_vault,module.key_vault_key ]
 }
+//ctreate the key_vault_policy
+module "key_vault_policy" {
+  source = "../project2_modules/key_vault_policy"
+  key_vault_id = module.key_vault.key_vault_id             
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = module.user_ass_identity.user_ass_identity_id
+
+  
+  secret_permissions      = ["Get","List"]           
+  key_permissions         = ["Get","List"] 
+  depends_on = [ module.key_vault,module.user_ass_identity ]
+}
 //load_balancer
 module "private_lb" {
   source = "../project2_modules/LoadBalancer"
@@ -155,26 +183,35 @@ module "lb_healthprobe" {
      depends_on = [ module.private_lb ]
 
 }
-
-
-module "project4-vm" {
-  source = "../project2_modules/vm"  
-  
-  vm_name                  = var.vm_name
+module "storage_account" {
+  source = "../project2_modules/storage_account"
+  storage_account_name = var.storage_account_name
   location = data.azurerm_resource_group.project4-rg.location
-  resource_group_name = data.azurerm_resource_group.project4-rg.name
-  vm_size                  = "Standard_DS1_v2"
-  admin_username           = var.admin_username
-  admin_password           = var.admin_password
-  os_disk_name             = var.os_disk_name
-  caching                  = "ReadWrite"
-  storage_account_type     = "Standard_LRS"
-   vm_image_publisher  = "Canonical"
-   vm_image_offer      = "Ubuntuserver"
-   vm_image_sku        = "18.04-LTS"
-   vm_image_version    = "latest" 
-  network_interface_ids    = module.nic.nic_id
-  disk_encryption_set_id = module.disk_encryption.id
-  depends_on = [ data.azurerm_resource_group.project4-rg ,module.nic,module.key_vault_key]
+  resource_name = data.azurerm_resource_group.project4-rg.name
+  account_tier =  "Standard"
+  account_replication_type = "LRS"
+  depends_on = [ data.azurerm_resource_group.project4-rg ]
 }
+
+
+# module "project4-vm" {
+#   source = "../project2_modules/vm"  
+  
+#   vm_name                  = var.vm_name
+#   location = data.azurerm_resource_group.project4-rg.location
+#   resource_group_name = data.azurerm_resource_group.project4-rg.name
+#   vm_size                  = "Standard_DS1_v2"
+#   admin_username           = module.admin_username
+#   admin_password           = module.admin_username
+#   os_disk_name             = var.os_disk_name
+#   caching                  = "ReadWrite"
+#   storage_account_type     = "Standard_LRS"
+#    vm_image_publisher  = "Canonical"
+#    vm_image_offer      = "Ubuntuserver"
+#    vm_image_sku        = "18.04-LTS"
+#    vm_image_version    = "latest" 
+#   network_interface_ids    = module.nic.nic_id
+#   disk_encryption_set_id = module.disk_encryption.id
+#   depends_on = [ data.azurerm_resource_group.project4-rg ,module.nic,module.disk_encryption]
+# }
 

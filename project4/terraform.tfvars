@@ -22,12 +22,12 @@ keyvault_name       = "ky678"
 
 # # Virtual Machine (VM)
 # vm_name             = "vm"
-# //vm_size             = "Standard_DS1_v2"
 # admin_username      = "project4"
 # admin_password      = "aravindh88"
 # os_disk_name        = "vm-os-disk"
 
-
+//stroage_account
+storage_account_name = "storageaccountproj4"
 
 
 #key
@@ -41,3 +41,4 @@ lb_name = "private-lb"
 
 //disk_encryption
 disk_encryption_name = "disk_encryption"
+
