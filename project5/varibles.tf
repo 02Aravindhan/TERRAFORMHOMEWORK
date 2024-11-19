@@ -1,3 +1,3 @@
-variable "vmss_name" {
-  type = string
-}
+# variable "vmss_name" {
+#   type = string
+# }
