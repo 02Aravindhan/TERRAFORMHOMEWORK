@@ -43,7 +43,7 @@ variable "vm_image_sku" {
   type = string
 }
 variable "network_interface_ids" {
-  type = string
+  type = list(string)
 }
 variable "caching" {
   type = string

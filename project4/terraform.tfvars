@@ -20,15 +20,16 @@ nic_name            = "project4-nic"
 keyvault_name       = "ky678"
 
 
-# # Virtual Machine (VM)
-# vm_name             = "vm"
-# admin_username      = "project4"
-# admin_password      = "aravindh88"
-# os_disk_name        = "vm-os-disk"
+# Virtual Machine (VM)
+vm_name             = "vm"
+admin_username      = "project4"
+admin_password      = "aravindh88"
+os_disk_name        = "vm-os-disk"
 
 //stroage_account
 storage_account_name = "storageaccountproj4"
-
+//data_disk
+managed_disk_name = "Data_disk"
 
 #key
   key-name       = "keyvault"

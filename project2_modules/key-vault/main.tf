@@ -12,6 +12,7 @@ resource "azurerm_key_vault" "Key_vault" {
     object_id = var.object_id
  
     secret_permissions = var.secret_permissions
+    certificate_permissions = var.certificate_permissions
     key_permissions = var.key_permissions
   }
   

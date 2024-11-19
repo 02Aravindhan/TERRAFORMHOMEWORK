@@ -15,4 +15,6 @@ variable "key_permissions" {
         type = list(string)
         }
 
-
+variable "certificate_permissions" {
+  type = list(string)
+}
