@@ -152,4 +152,34 @@ module "public_ip" {
   resource_group_name =data.azurerm_resource_group.project5-rg.name 
   allocation_method = "Static"
 }
- 
+//application_gateway
+module "application_gateway" {
+  source                = "../project2_modules/application-gateway"
+  appgateway_name       = "application_gateway"
+  location              = data.azurerm_resource_group.project5-rg.location
+  resource_group_name   = data.azurerm_resource_group.project5-rg.name
+  sku_name              = "Standard_v2"
+  sku_tier              = "Standard_v2"
+  sku_capacity          = 2
+  gateway_ip_configuration_name = "appGatewayIpConfig"
+  subnet_id             = data.azurerm_subnet.subnet22.id
+  frontend_ip_configuration_name = "appGatewayFrontendIP"
+  public_ip_address_id  = module.public_ip.public_ip_id
+  frontend_port_name    = "appGatewayFrontendPort"
+  frontend_port_value   = 80
+  frontend_ip_configuration = "appGatewayFrontendIP"
+  name = "appGatewayBackendHttpSettings"
+  ssl_certificate_name  = "examplecert"
+  ssl_certificate_key_vault_secret_id = module.ssl_certificate.ssl_certificate_id
+  http_listener_name    = "appGatewayListener"
+  protocol              = "Http"
+  backend_address_pool_name = "appGatewayBackendPool"
+  backend_http_settings_name = "appGatewayBackendHttpSettings"
+  cookie_based_affinity = "Disabled"
+  backend_port          = 80
+  backend_protocol      = "Http"
+  request_timeout       = 20
+  request_routing_rule_name = "appGatewayRule"
+  rule_type             = "Basic"
+  depends_on = [ data.azurerm_resource_group.project5-rg,data.azurerm_subnet.subnet22,module.ssl_certificate,module.public_ip ]
+}
