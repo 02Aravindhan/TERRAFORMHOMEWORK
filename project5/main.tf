@@ -142,4 +142,14 @@ module "private_endpoint" {
 #     type = "UserAssigned"
 #   }
 # }
+
+//Public IP Address for Application Gateway
+
+module "public_ip" {
+  source = "../project2_modules/public_ip"
+  public_ip_name ="publicip-app-gateway"
+  location = data.azurerm_resource_group.project5-rg.location
+  resource_group_name =data.azurerm_resource_group.project5-rg.name 
+  allocation_method = "Static"
+}
  
