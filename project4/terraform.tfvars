@@ -17,13 +17,13 @@ nic_name            = "project4-nic"
 
 
 # Key Vault
-keyvault_name       = "ky11"
+keyvault_name       = "ky1218"
 
 
 # # Virtual Machine (VM)
 # vm_name             = "vm"
-admin_username      = "project4"
-admin_password      = "aravindh88"
+admin_username      = "azureuser"
+admin_password      = "H@llomt15!"
 # os_disk_name        = "vm-os-disk"
 
 //stroage_account

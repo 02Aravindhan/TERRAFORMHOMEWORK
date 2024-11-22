@@ -7,54 +7,64 @@ variable "location" {
 variable "resource_group_name" {
   type = string
 }
+
 variable "sku" {
   type = string
 }
+
 variable "instances" {
   type = number
 }
-variable "upgrade_mode" {
-  type = string
-}
-variable "subnet_id" {
+variable "admin_password" {
   type = string
 }
 variable "admin_username" {
   type = string
 }
-variable "admin_password" {
+variable "identity_type" {
   type = string
 }
-variable "os_disk" {
+
+variable "image_publisher" {
   type = string
 }
-variable "caching" {
+
+variable "image_offer" {
   type = string
 }
-variable "storage_account_type" {
+
+variable "image_sku" {
   type = string
 }
-variable "network_interface" {
+
+variable "image_version" {
   type = string
 }
-variable "name" {
+
+variable "nic_name" {
   type = string
 }
+
 variable "primary" {
   type = bool
 }
-variable "enable_accelerated_networking" {
-  type = bool
-}
-variable "identity" {
+
+variable "ip_configuration_name" {
   type = string
 }
-variable "type" {
+
+variable "subnet_id" {
   type = string
 }
-variable "ip_configuration" {
+
+
+variable "os_caching" {
   type = string
 }
-variable "name" {
+
+variable "storage_account_type" {
   type = string
+}
+variable "application_gateway_backend_address_pool_ids" {
+  type = list(string)
 }
