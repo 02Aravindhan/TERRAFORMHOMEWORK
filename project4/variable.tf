@@ -23,13 +23,13 @@ variable "keyvault_name" {
 # variable "vm_name" {
 #  type = string
 # }
-# variable "admin_username" {
-#  type = string
-# }
+variable "admin_username" {
+ type = string
+}
 
-# variable "admin_password" {
-#   type = string
-# }
+variable "admin_password" {
+  type = string
+}
 
 # variable "os_disk_name" {
 # type = string

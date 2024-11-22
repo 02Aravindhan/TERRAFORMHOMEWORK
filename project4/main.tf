@@ -57,21 +57,21 @@ data "azurerm_client_config" "current" {}
 data "azuread_client_config" "current" {}
 
 //admin_name
-# module "admin_username" {
-#   source = "../project2_modules/admin_username"
-#   admin_username = "project4-name"
-#   value = var.admin_username
-#   key_vault_id = module.key_vault.key_vault_id
-#   depends_on = [ module.key_vault ]
-# }
-# //admin_password
-# module "admin_password" {
-#   source = "../project2_modules/admin_password"
-#   admin_password = "project4-password"
-#   value = var.admin_password
-#   key_vault_id = module.key_vault.key_vault_id
-#   depends_on = [ module.key_vault ]
-# }
+module "admin_username" {
+  source = "../project2_modules/admin_username"
+  admin_username = "project4-name"
+  value = var.admin_username
+  key_vault_id = module.key_vault.key_vault_id
+  depends_on = [ module.key_vault ]
+}
+//admin_password
+module "admin_password" {
+  source = "../project2_modules/admin_password"
+  admin_password = "project4-password"
+  value = var.admin_password
+  key_vault_id = module.key_vault.key_vault_id
+  depends_on = [ module.key_vault ]
+}
 
 # // key_vault
 
