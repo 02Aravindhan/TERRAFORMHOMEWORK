@@ -119,3 +119,9 @@ variable "name" {
 variable "backend_http_settings_name" {
   type = string
 }
+variable "type" {
+  type = string
+}
+variable "identity_ids" {
+  type = list(string)
+}

@@ -30,8 +30,17 @@ provider "azurerm" {
    virtual_network_name = "modules_vnets"
    depends_on = [ data.azurerm_resource_group.project5-rg,data.azurerm_virtual_network.vnet ]
  }
+ module "appgateway_subnet" {
+   source = "../project2_modules/subnet"
+   for_each = var.subnets
+   subnets_name = each.key
+   rg_name = data.azurerm_resource_group.project5-rg.name
+   vnet_name =data.azurerm_virtual_network.vnet.name
+   address_prefixes =  each.value.address_prefix
+   depends_on = [ data.azurerm_resource_group.project5-rg,data.azurerm_virtual_network.vnet ]
+ }
  data "azurerm_key_vault" "Key_vault" {
-   name = "ky678"
+   name = "ky11"
    resource_group_name = data.azurerm_resource_group.project5-rg.name
  }
 
@@ -152,34 +161,64 @@ module "public_ip" {
   resource_group_name =data.azurerm_resource_group.project5-rg.name 
   allocation_method = "Static"
 }
-//application_gateway
-module "application_gateway" {
-  source                = "../project2_modules/application-gateway"
-  appgateway_name       = "application_gateway"
-  location              = data.azurerm_resource_group.project5-rg.location
-  resource_group_name   = data.azurerm_resource_group.project5-rg.name
-  sku_name              = "Standard_v2"
-  sku_tier              = "Standard_v2"
-  sku_capacity          = 2
-  gateway_ip_configuration_name = "appGatewayIpConfig"
-  subnet_id             = data.azurerm_subnet.subnet22.id
-  frontend_ip_configuration_name = "appGatewayFrontendIP"
-  public_ip_address_id  = module.public_ip.public_ip_id
-  frontend_port_name    = "appGatewayFrontendPort"
-  frontend_port_value   = 80
-  frontend_ip_configuration = "appGatewayFrontendIP"
-  name = "appGatewayBackendHttpSettings"
-  ssl_certificate_name  = "examplecert"
-  ssl_certificate_key_vault_secret_id = module.ssl_certificate.ssl_certificate_id
-  http_listener_name    = "appGatewayListener"
-  protocol              = "Http"
-  backend_address_pool_name = "appGatewayBackendPool"
-  backend_http_settings_name = "appGatewayBackendHttpSettings"
-  cookie_based_affinity = "Disabled"
-  backend_port          = 80
-  backend_protocol      = "Http"
-  request_timeout       = 20
-  request_routing_rule_name = "appGatewayRule"
-  rule_type             = "Basic"
-  depends_on = [ data.azurerm_resource_group.project5-rg,data.azurerm_subnet.subnet22,module.ssl_certificate,module.public_ip ]
+data "azurerm_client_config" "current" {}
+data "azuread_client_config" "current" {}
+//create the manged user identity
+data  "azurerm_user_assigned_identity" "user_ass_identity" {
+  name = "key_user_identity"
+  resource_group_name = "module2-rg"
 }
+
+//ctreate the key_vault_policy
+module "key_vault_access_policy" {
+  source = "../project2_modules/key_vault_policy"
+  key_vault_id = data.azurerm_key_vault.Key_vault.id             
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = data.azurerm_user_assigned_identity.user_ass_identity.principal_id
+
+  
+  secret_permissions      = ["Get","List"]           
+  key_permissions         = ["Get","List"]
+  certificate_permissions = ["Get","List"]
+  depends_on = [ data.azurerm_key_vault.Key_vault,data.azurerm_user_assigned_identity.user_ass_identity]
+}
+
+//application_gateway
+# module "application_gateway" {
+#   source                = "../project2_modules/application-gateway"
+#   appgateway_name       = "application_gateway"
+#   location              = data.azurerm_resource_group.project5-rg.location
+#   resource_group_name   = data.azurerm_resource_group.project5-rg.name
+#   sku_name              = "Standard_v2"
+#   sku_tier              = "Standard_v2"
+#   sku_capacity          = 2
+  
+#   type =  "UserAssigned"
+#   identity_ids = [data.azurerm_user_assigned_identity.user_ass_identity.id]
+
+#   gateway_ip_configuration_name = "appGatewayIpConfig"
+#   subnet_id             = module.appgateway_subnet["appgateway_subnet"].subnet_id
+
+#   frontend_ip_configuration_name = "appGatewayFrontendIP"
+#   public_ip_address_id  = module.public_ip.public_ip_id
+
+#   frontend_port_name    = "appGatewayFrontendPort"
+#   frontend_port_value   = 443
+
+#   frontend_ip_configuration = "appGatewayFrontendIP"
+#   name = "appGatewayBackendHttpSettings"
+#   ssl_certificate_name  = "examplecert"
+#   ssl_certificate_key_vault_secret_id = module.ssl_certificate.secret_id
+#   http_listener_name    = "appGatewayListener"
+
+#   protocol              = "Http"
+#   backend_address_pool_name = "appGatewayBackendPool"
+#   backend_http_settings_name = "appGatewayBackendHttpSettings"
+#   cookie_based_affinity = "Disabled"
+#   backend_port          = 80
+#   backend_protocol      = "Http"
+#   request_timeout       = 20
+#   request_routing_rule_name = "appGatewayRule"
+#   rule_type             = "Basic"
+#   depends_on = [ data.azurerm_resource_group.project5-rg,module.appgateway_subnet,module.ssl_certificate,module.public_ip ]
+# }

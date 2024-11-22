@@ -57,21 +57,21 @@ data "azurerm_client_config" "current" {}
 data "azuread_client_config" "current" {}
 
 //admin_name
-module "admin_username" {
-  source = "../project2_modules/admin_username"
-  admin_username = "project4-name"
-  value = var.admin_username
-  key_vault_id = module.key_vault.key_vault_id
-  depends_on = [ module.key_vault ]
-}
-//admin_password
-module "admin_password" {
-  source = "../project2_modules/admin_password"
-  admin_password = "project4-password"
-  value = var.admin_password
-  key_vault_id = module.key_vault.key_vault_id
-  depends_on = [ module.key_vault ]
-}
+# module "admin_username" {
+#   source = "../project2_modules/admin_username"
+#   admin_username = "project4-name"
+#   value = var.admin_username
+#   key_vault_id = module.key_vault.key_vault_id
+#   depends_on = [ module.key_vault ]
+# }
+# //admin_password
+# module "admin_password" {
+#   source = "../project2_modules/admin_password"
+#   admin_password = "project4-password"
+#   value = var.admin_password
+#   key_vault_id = module.key_vault.key_vault_id
+#   depends_on = [ module.key_vault ]
+# }
 
 # // key_vault
 
@@ -224,24 +224,24 @@ module "data_disk" {
 #   caching            = "ReadWrite"
 # }
 
-module "project4_vm" {
-  source = "../project2_modules/vm"
-  vm_name =var.vm_name
-  resource_group_name =data.azurerm_resource_group.project4-rg.name
-  location =data.azurerm_resource_group.project4-rg.location 
-  vm_size = "Standard_D2s_V3"
-  admin_username = var.admin_username
-  admin_password = var.admin_password
-  network_interface_ids =[module.nic.nic_id]
-  storage_account_type = "Premium_LRS"  
-  caching ="ReadWrite"
-  os_disk_name =var.os_disk_name   
-  disk_encryption_set_id = module.disk_encryption.id
-  vm_image_offer = "windowsServer"
-  vm_image_publisher ="MicrosoftWindowsServer"
-  vm_image_sku ="2022-datacenter-azure-edition"
-  vm_image_version ="latest"
+# module "project4_vm" {
+#   source = "../project2_modules/vm"
+#   vm_name =var.vm_name
+#   resource_group_name =data.azurerm_resource_group.project4-rg.name
+#   location =data.azurerm_resource_group.project4-rg.location 
+#   vm_size = "Standard_D2s_V3"
+#   admin_username = var.admin_username
+#   admin_password = var.admin_password
+#   network_interface_ids =[module.nic.nic_id]
+#   storage_account_type = "Premium_LRS"  
+#   caching ="ReadWrite"
+#   os_disk_name =var.os_disk_name   
+#   disk_encryption_set_id = module.disk_encryption.id
+#   vm_image_offer = "windowsServer"
+#   vm_image_publisher ="MicrosoftWindowsServer"
+#   vm_image_sku ="2022-datacenter-azure-edition"
+#   vm_image_version ="latest"
   
-  depends_on = [ data.azurerm_resource_group.project4-rg,module.nic,module.disk_encryption ] 
-}
+#   depends_on = [ data.azurerm_resource_group.project4-rg,module.nic,module.disk_encryption ] 
+# }
 

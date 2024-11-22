@@ -8,6 +8,10 @@ resource "azurerm_application_gateway" "appgateway" {
     tier     = var.sku_tier
     capacity = var.sku_capacity
   }
+    identity {
+    type = var.type
+    identity_ids =var.identity_ids
+  }
 
   gateway_ip_configuration {
     name     = var.gateway_ip_configuration_name
