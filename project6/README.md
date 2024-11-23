@@ -1,3 +1,7 @@
+<!-- BEGIN_TF_DOCS -->
+
+
+```hcl
 terraform {
   required_providers {
     azurerm = {
@@ -157,3 +161,166 @@ module "nsg-associate-to-sub" {
   network_security_group_id     = module.nsg.network_security_group_id
   depends_on = [data.azurerm_subnet.subnet,module.nsg ]
 }
+```
+
+<!-- markdownlint-disable MD033 -->
+## Requirements
+
+The following requirements are needed by this module:
+
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.1.0)
+
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 3.0.2)
+
+## Providers
+
+The following providers are used by this module:
+
+- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 3.0.2)
+
+## Resources
+
+The following resources are used by this module:
+
+- [azurerm_resource_group.project6-rg](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) (data source)
+- [azurerm_subnet.subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) (data source)
+- [azurerm_virtual_network.vnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/virtual_network) (data source)
+
+<!-- markdownlint-disable MD013 -->
+## Required Inputs
+
+The following input variables are required:
+
+### <a name="input_firewall_subnet"></a> [firewall\_subnet](#input\_firewall\_subnet)
+
+Description: n/a
+
+Type:
+
+```hcl
+map(object({
+    subnet_name = string
+    address_prefix = string
+  }))
+```
+
+### <a name="input_nsg_name"></a> [nsg\_name](#input\_nsg\_name)
+
+Description: n/a
+
+Type: `string`
+
+### <a name="input_route_table_name"></a> [route\_table\_name](#input\_route\_table\_name)
+
+Description: n/a
+
+Type: `string`
+
+### <a name="input_security_rules"></a> [security\_rules](#input\_security\_rules)
+
+Description: n/a
+
+Type:
+
+```hcl
+map(object({
+    name                       = string
+    priority                   = number
+    direction                  = string
+    access                     = string
+    protocol                   = string
+    source_port_range          = string
+    destination_port_ranges     = list(string)
+    source_address_prefix      = string
+    destination_address_prefix = string
+    nsg_name                   = string
+   }))
+```
+
+### <a name="input_subnets"></a> [subnets](#input\_subnets)
+
+Description: n/a
+
+Type:
+
+```hcl
+map(object({
+      subnets_name =string
+      address_prefix=string
+    }))
+```
+
+## Optional Inputs
+
+No optional inputs.
+
+## Outputs
+
+No outputs.
+
+## Modules
+
+The following Modules are called:
+
+### <a name="module_Public_ip"></a> [Public\_ip](#module\_Public\_ip)
+
+Source: ../project2_modules/public_ip
+
+Version:
+
+### <a name="module_firewall"></a> [firewall](#module\_firewall)
+
+Source: ../project2_modules/firewall
+
+Version:
+
+### <a name="module_firewall_policy"></a> [firewall\_policy](#module\_firewall\_policy)
+
+Source: ../project2_modules/firewall_policy
+
+Version:
+
+### <a name="module_firewall_route"></a> [firewall\_route](#module\_firewall\_route)
+
+Source: ../project2_modules/route
+
+Version:
+
+### <a name="module_firewall_subnet"></a> [firewall\_subnet](#module\_firewall\_subnet)
+
+Source: ../project2_modules/subnet
+
+Version:
+
+### <a name="module_nsg"></a> [nsg](#module\_nsg)
+
+Source: ../project2_modules/nsg
+
+Version:
+
+### <a name="module_nsg-associate-to-sub"></a> [nsg-associate-to-sub](#module\_nsg-associate-to-sub)
+
+Source: ../project2_modules/nsg-associate
+
+Version:
+
+### <a name="module_nsg_rule"></a> [nsg\_rule](#module\_nsg\_rule)
+
+Source: ../project2_modules/nsg_rule
+
+Version:
+
+### <a name="module_route_table"></a> [route\_table](#module\_route\_table)
+
+Source: ../project2_modules/route _table
+
+Version:
+
+### <a name="module_routetable-associate"></a> [routetable-associate](#module\_routetable-associate)
+
+Source: ../project2_modules/routetable-associate
+
+Version:
+
+This is the project6 Configuration Terraform Files.
+<!-- END_TF_DOCS -->
