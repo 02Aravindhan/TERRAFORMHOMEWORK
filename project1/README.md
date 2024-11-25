@@ -1,5 +1,5 @@
 <!-- BEGIN_TF_DOCS -->
-![project1hw](https://github.com/user-attachments/assets/de6bdc14-669e-40a2-a11b-1fbb895d59cd)
+
  ### project1: Basic Azure Resources Setup (VNET, Subnet, Resource Group, NSG, Route Table)
 
    * First we have to create the Resource Group
@@ -9,7 +9,8 @@
    * <b>Virtual Network (VNET): Create a VNET with a specific address space .
    * <b>Network Security Group (NSG): Associate an NSG with subnets.defining security rules to control inbound and outbound traffic.
    *  <b>Route Table: Create a custom route table and associate it with a subnet.
-
+ DIAGRAM:
+ ![project1hw](https://github.com/user-attachments/assets/de6bdc14-669e-40a2-a11b-1fbb895d59cd)
 ```hcl
 resource "azurerm_resource_group" "rg" {
   name     = var.rg_name
