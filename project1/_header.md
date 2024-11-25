@@ -1,4 +1,4 @@
- ### project1: Basic Azure Resources Setup (VNET, Subnet, Resource Group, NSG, Route Table)
+ ## project1: Basic Azure Resources Setup (VNET, Subnet, Resource Group, NSG, Route Table)
 
    * First we have to create the Resource Group
    * The name of the VNet, taken from the map key.address_space: The IP address range for the VNet  

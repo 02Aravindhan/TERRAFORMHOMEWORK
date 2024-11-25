@@ -1,4 +1,4 @@
-### Project2: Consume Modules to Create (VNET, Subnet, Resource Group, NSG, Route Table) 
+## Project2: Consume Modules to Create (VNET, Subnet, Resource Group, NSG, Route Table) 
 * Resource Group (rg): Creates the foundation for all resources.
 * Virtual Networks (vnets): Creates network spaces for subnets.
 * Subnets (subnets): Defines smaller network spaces within the VNETs.
