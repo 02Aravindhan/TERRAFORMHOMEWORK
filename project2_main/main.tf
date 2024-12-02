@@ -6,9 +6,10 @@ terraform {
     }
   }
   required_version = ">= 1.1.0"
+  
    backend "azurerm" {
     resource_group_name = "RemoteState-rg"
-    storage_account_id = "storageaccount"
+    storage_account_name = "storageaccount"
     container_name = "storage-backend"
     key = "project2-backend.tfstate"
     
