@@ -15,13 +15,10 @@ subnets = {
   }
 }
 
-nsg_name ={
-  "module_nsg"={
-       name="module_nsg"
-}
-}
+nsg_name ="module_nsg"
+  
 
-nsg_rules = {
+nsg_security_rules = {
   "nsg_rules"={
      name                       = "Allow_HTTP"
       priority                   = 100
@@ -29,7 +26,7 @@ nsg_rules = {
       access                     = "Allow"
       protocol                   = "Tcp"
       source_port_range          = "*"
-      destination_port_range     = 80
+      destination_port_ranges     = ["80"]
       source_address_prefix      = "*"
       destination_address_prefix = "*"
      

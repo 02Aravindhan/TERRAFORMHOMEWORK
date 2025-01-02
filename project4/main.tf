@@ -9,16 +9,18 @@ terraform {
  
  backend "azurerm" {
     resource_group_name = "RemoteState-rg"
-    storage_account_name = "storageaccount"
+    storage_account_name = "projectstorageaccount11"
     container_name = "storage-backend"
-    key = "project2-backend.tfstate"
+    key = "project4-backend.tfstate"
     
   }
 }
  
 provider "azurerm" {
-    features {}
+      features {}
+  
 }
+
  
  data "azurerm_resource_group" "project4-rg" {
    name = "module2-rg"
@@ -38,9 +40,35 @@ provider "azurerm" {
   vnet_name = data.azurerm_virtual_network.vnet.name
   rg_name = data.azurerm_resource_group.project4-rg.name
 
-  depends_on = [ data.azurerm_resource_group.project4-rg,data.azurerm_virtual_network.vnet ]
+  depends_on = [ data.azurerm_resource_group.project4-rg]
   
 }
+
+
+module "loadbalancer" {
+  source                = "../project2_modules/private-loadbalance"
+  lb_name              = "my-private-lb"
+  location            = data.azurerm_resource_group.project4-rg.location
+  resource_group_name = data.azurerm_resource_group.project4-rg.name
+  sku                 = var.sku
+  frontend_ip_name    = var.frontend_ip_name
+  subnet_id           = module.subnets["subnet22"].subnet_id
+  private_ip_address_allocation = var.private_ip_address_allocation
+  backpool_name       = var.backpool_name
+  lb_rule_name        = var.lb_rule_name
+  protocol            = var.protocol
+  frontend_port       = var.frontend_port
+  backend_port        = var.backend_port
+  frontend_ip_configuration_name = var.frontend_ip_configuration_name
+  idle_timeout_in_minutes = var.idle_timeout_in_minutes
+  HealthProbe_name =var.HealthProbe_name
+  port                = var.port
+  interval_in_seconds = var.interval_in_seconds
+  number_of_probes    = var.number_of_probes
+  
+  depends_on = [ data.azurerm_resource_group.project4-rg,module.subnets ]
+}
+
 
  # Network Interface (NIC)
 module  "nic" {
@@ -53,175 +81,101 @@ module  "nic" {
   private_ip_address_allocation = "Dynamic"
   depends_on = [ data.azurerm_resource_group.project4-rg,module.subnets ]
 }
-//nic to associate
-module "nic_backend_asso" {
-  source = "../project2_modules/nic_associate"
-  network_interface_id = module.nic.nic_id
-  backend_address_pool_id = module.backend_address_pool.backend_address_pool_id
-  ip_configuration_name = "internal"
-}
+# //nic to associate
+# module "nic_backend_asso" {
+#   source = "../project2_modules/nic_associate"
+#   network_interface_id = module.nic.nic_id
+#   backend_address_pool_id =
+#   ip_configuration_name = "internal"
+# }
 data "azurerm_client_config" "current" {}
 data "azuread_client_config" "current" {}
 
-//admin_name
-module "admin_username" {
-  source = "../project2_modules/admin_username"
-  admin_username = "project4-name"
-  value = var.admin_username
-  key_vault_id = module.key_vault.key_vault_id
-  depends_on = [ module.key_vault ]
-}
-//admin_password
-module "admin_password" {
-  source = "../project2_modules/admin_password"
-  admin_password = "project4-password"
-  value = var.admin_password
-  key_vault_id = module.key_vault.key_vault_id
-  depends_on = [ module.key_vault ]
-}
-
-# // key_vault
+# //admin_name
+# module "admin_username" {
+#   source = "../project2_modules/admin_username"
+#   admin_username = "project4-name"
+#   value = var.admin_username
+#   key_vault_id = module.key_vault.key_vault_id
+#   depends_on = [ module.key_vault ]
+# }
+# //admin_password
+# module "admin_password" {
+#   source = "../project2_modules/admin_password"
+#   admin_password = "project4-password"
+#   value = var.admin_password
+#   key_vault_id = module.key_vault.key_vault_id
+#   depends_on = [ module.key_vault ]
+# }
 
 module "key_vault" {
-  source              = "../project2_modules/key-vault"
-  name          = var.keyvault_name
-  sku_name            = "standard"
-  purge_protection_enabled   =true
-  soft_delete_retention_days =30 
-  secret_permissions = ["Get",
-      "Set",
-      "Backup",
-      "Delete",
-      "Purge",
-      "List",
-      "Recover",
-      "Restore",]
-   certificate_permissions = [
-      "Get",
-      "List",
-      "Create",
-      "Delete",
-      "Update",
-      "Import",
-      "ManageContacts",
-      "ManageIssuers",
-      "Purge",
-      "Recover"
-    ]
-  key_permissions = ["Get","List","Create","Delete"]
-  resource_group_name = data.azurerm_resource_group.project4-rg.name
-  location           = data.azurerm_resource_group.project4-rg.location
-  tenant_id          = data.azurerm_client_config.current.tenant_id
-  object_id          = data.azuread_client_config.current.object_id
+  source = "../project2_modules/key-vault"
+  key_vault_name          = var.keyvault_name
+  resource_group_name     = data.azurerm_resource_group.project4-rg.name
+  location                = data.azurerm_resource_group.project4-rg.location
+  sku_name                = var.sku_name
+  tenant_id               = data.azurerm_client_config.current.tenant_id
+  object_id               =  data.azuread_client_config.current.object_id
+  purge_protection_enabled = var.purge_protection_enabled
+  soft_delete_retention_days = var.soft_delete_retention_days
+  secret_permissions      = var.secret_permissions
+  certificate_permissions = var.certificate_permissions
+  key_permissions         =var.key_permissions
+  key_name                = var.key_name
+  key_opts                = var.key_opts
+  key_size                = var.key_size
+  key_type                = var.key_type
+  admin_password = var.admin_password
+  admin_password_value =var.admin_password_value
+  admin_username = var.admin_username
+  admin_username_value =  var.admin_username_value
+
   depends_on = [ data.azurerm_resource_group.project4-rg ]
 }
 
-// Key for disk encryption (Customer Managed Key)
-module "key_vault_key" {
-  source = "../project2_modules/key_vault_key"  
-  key_name =   var.keyvault_name
-  key_vault_id = module.key_vault.key_vault_id
-  key_opts     = ["encrypt", "decrypt"]
-  key_size     =2048                         
 
-  key_type     = "RSA"
-  depends_on = [ module.key_vault ]
-}
 
-module "disk_encryption" {
-  source = "../project2_modules/disk_encryption"
-  disk_encryption_name = var.disk_encryption_name
-  resource_group_name = data.azurerm_resource_group.project4-rg.name
-  location = data.azurerm_resource_group.project4-rg.location
-  key_vault_key_id = module.key_vault_key.id
+#  module "disk_encryption" {
+#   source = "../project2_modules/disk_encryption"
+#   disk_encryption_name = var.disk_encryption_name
+#   resource_group_name = data.azurerm_resource_group.project4-rg.name
+#   location = data.azurerm_resource_group.project4-rg.location
+#   key_vault_key_id = module.key_vault.key_vault_id
 
-  depends_on = [ module.key_vault_key,data.azurerm_resource_group.project4-rg ]
-}
+#   depends_on = [ module.key_vault,data.azurerm_resource_group.project4-rg ]
+# }
 
-//create the manged user identity
-module "user_ass_identity" {
-  source = "../project2_modules/user_assigned_identity"
-  user_ass_identity_name = var.user_ass_identity_name
-  resource_group_name =data.azurerm_resource_group.project4-rg.name
-  location = data.azurerm_resource_group.project4-rg.location
-  depends_on = [ data.azurerm_resource_group.project4-rg,module.key_vault,module.key_vault_key ]
-}
-//ctreate the key_vault_policy
-module "key_vault_policy" {
-  source = "../project2_modules/key_vault_policy"
-  key_vault_id = module.key_vault.key_vault_id             
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = module.user_ass_identity.user_ass_identity_id
+# //create the manged user identity
+# module "user_ass_identity" {
+#   source = "../project2_modules/user_assigned_identity"
+#   user_ass_identity_name = var.user_ass_identity_name
+#   resource_group_name =data.azurerm_resource_group.project4-rg.name
+#   location = data.azurerm_resource_group.project4-rg.location
+#   depends_on = [module.key_vault,data.azurerm_resource_group.project4-rg ]
+# }
 
-  
-  secret_permissions      = ["Get","List"]           
-  key_permissions         = ["Get","List"]
-  certificate_permissions = ["Get","List"]
-  depends_on = [ module.key_vault,module.user_ass_identity ]
-}
-//load_balancer
-module "private_lb" {
-  source = "../project2_modules/LoadBalancer"
-  lb_name = var.lb_name
-  location = data.azurerm_resource_group.project4-rg.location
-  resource_group_name = data.azurerm_resource_group.project4-rg.name
-  sku = "Standard"
-  subnet_id =  module.subnets["subnet22"].subnet_id
-  private_ip_address_allocation = "Dynamic"
-  frontend_ip_name = "private-frontend-ip"
-  depends_on = [data.azurerm_resource_group.project4-rg ]
-}
 
-//backend_pool
-module "backend_address_pool" {
-  source = "../project2_modules/backend_address_pool"
-  backpool_name = "Backendpool"
-  loadbalancer_id = module.private_lb.azurerm_lb_id
-  depends_on = [ module.private_lb ]
-}
-//lb_rule
-module "lb_rule" {
-  source = "../project2_modules/lb_rule"
-    lb_rule_name                     ="project4-Rule"
-    protocol                         = "Tcp"
-    frontend_port                    = 80
-    backend_port                     = 80
-    frontend_ip_configuration_name   = "private-frontend-ip"
-    idle_timeout_in_minutes          = 4
-    loadbalancer_id                  = module.private_lb.azurerm_lb_id
-    depends_on = [ module.private_lb,module.backend_address_pool ]
-}
-//lb_healthprobe
-module "lb_healthprobe" {
-  source = "../project2_modules/lb_healthprobe"
-     name                = "HealthProbe"
-     protocol            = "Tcp"
-     port                = 80
-     interval_in_seconds = 5
-     number_of_probes    = 2
-     loadbalancer_id = module.private_lb.azurerm_lb_id
-     depends_on = [ module.private_lb ]
 
-}
-module "storage_account" {
-  source = "../project2_modules/storage_account"
-  storage_account_name = var.storage_account_name
-  location = data.azurerm_resource_group.project4-rg.location
-  resource_name = data.azurerm_resource_group.project4-rg.name
-  account_tier =  "Standard"
-  account_replication_type = "LRS"
-  depends_on = [ data.azurerm_resource_group.project4-rg ]
-}
-module "data_disk" {
-  source = "../project2_modules/disk"
-  managed_disk_name =var.managed_disk_name
-  location             = data.azurerm_resource_group.project4-rg.location
-  resource_group_name  = data.azurerm_resource_group.project4-rg.name
-  storage_account_type = "Standard_LRS"
-  create_option        = "Empty"
-  disk_size_gb         = "4"
-  depends_on = [ data.azurerm_resource_group.project4-rg ]
-}
+
+# module "storage_account" {
+#   source = "../project2_modules/storage_account"
+#   storage_account_name = var.storage_account_name
+#   location = data.azurerm_resource_group.project4-rg.location
+#   resource_name = data.azurerm_resource_group.project4-rg.name
+#   account_tier =  "Standard"
+#   account_replication_type = "LRS"
+#   depends_on = [ data.azurerm_resource_group.project4-rg ]
+# }
+# module "data_disk" {
+#   source = "../project2_modules/disk"
+#   managed_disk_name =var.managed_disk_name
+#   location             = data.azurerm_resource_group.project4-rg.location
+#   resource_group_name  = data.azurerm_resource_group.project4-rg.name
+#   storage_account_type = "Standard_LRS"
+#   create_option        = "Empty"
+#   disk_size_gb         = "4"
+#   depends_on = [ data.azurerm_resource_group.project4-rg ]
+# }
 # Attach the data disk to the virtual machine
 # module "disk_attach" {
 #   source = "../project2_modules/data_disk_attachment"

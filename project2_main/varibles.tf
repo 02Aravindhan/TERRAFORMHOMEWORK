@@ -25,14 +25,12 @@ variable "subnets" {
 }
 
 variable "nsg_name" {
-  type  = map(object({
-    name = string
-  }))
+  type  = string
   
 }
 
-variable "nsg_rules" {
-  type = map(object({
+variable "nsg_security_rules" {
+  type = list(object({
     name                       = string
     priority                   = number
     direction                  = string
@@ -41,7 +39,7 @@ variable "nsg_rules" {
     source_address_prefix      = string
     source_port_range          = string
     destination_address_prefix = string
-    destination_port_range     = string
+    destination_port_ranges     = list(string)
     
 
   }))

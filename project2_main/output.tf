@@ -11,12 +11,8 @@ output "subnets_name" {
   value = module.subnets
   
 }
-output "nsg_name" {
-  value = module.nsg_name
-  
-}
-output "nsg_rules" {
-  value = module.nsg_rules
+output "nsg" {
+  value = module.nsg
   
 }
 

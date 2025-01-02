@@ -1,6 +1,6 @@
 
 
-  variable "name" {
+  variable "key_vault_name" {
     type = string
     
   }
@@ -40,4 +40,35 @@ variable "key_permissions" {
 }
 variable "certificate_permissions" {
   type = list(string)
+}
+
+//key
+variable "key_name" {
+    type = string
+  
+}
+
+variable "key_opts" {
+  type = list(string)
+}
+variable "key_size" {
+  type = string
+}
+variable "key_type" {
+    type = string
+  
+}
+
+//secret
+variable "admin_username_value" {
+  type = string
+}
+variable "admin_username" {
+  type = string
+}
+variable "admin_password_value" {
+  type = string
+}
+variable "admin_password" {
+  type = string
 }

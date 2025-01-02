@@ -9,7 +9,7 @@ terraform {
   
    backend "azurerm" {
     resource_group_name = "RemoteState-rg"
-    storage_account_name = "storageaccount"
+    storage_account_name = "projectstorageaccount11"
     container_name = "storage-backend"
     key = "project2-backend.tfstate"
     
@@ -37,6 +37,7 @@ module "vnets" {
   location = module.name.location
   
   depends_on = [ module.name ]
+
 }
 
 module "subnets" {
@@ -46,37 +47,21 @@ module "subnets" {
   address_prefixes = each.value.address_prefixes
   vnet_name = module.vnets["modules_vnets"].name
   rg_name = module.name.rg
+  
 
   depends_on = [ module.vnets ]
   
 }
 
-module "nsg_name" {
+module "nsg" {
   source = "../project2_modules/nsg"
-  for_each = var.nsg_name
-  nsg_name = each.value.name
-  rg_name =module.name.rg 
-  location = module.name.location
-  
-}
-module "nsg_rules" {
-  source = "../project2_modules/nsg_rule"
-  for_each = var.nsg_rules
-  nsg_name = module.nsg_name["module_nsg"].name
   rg_name = module.name.rg
   location = module.name.location
-  name                        = each.value.name
-  priority                    = each.value.priority
-  direction                   = each.value.direction
-  access                      = each.value.access
-  protocol                    = each.value.protocol
-  source_address_prefix       = each.value.source_address_prefix
-  source_port_range           = each.value.source_port_range
-  destination_address_prefix  = each.value.destination_address_prefix
-  destination_port_range      = each.value.destination_port_range
-    
-    depends_on = [ module.name,module.nsg_name ]
-  }
+  nsg_name = var.nsg_name
+  nsg_security_rules = var.nsg_security_rules
+  depends_on = [ module.name ]
+  
+}
 
   module "route_table" {
     source = "../project2_modules/route _table"
